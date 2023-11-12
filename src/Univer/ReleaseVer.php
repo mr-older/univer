@@ -12,7 +12,7 @@ namespace Univer;
 
 class releaseVer
 {
-    private $github_url = "https://api.github.com/repos/";
+    private $github_url = "https://api.github.com/repos/";	// https://api.github.com/repos/OWNER/REPO/releases
 	public $error, $last_commit_hash_path;
 
 	function __construct($last_commit_hash_path = null) {

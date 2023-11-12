@@ -2,7 +2,7 @@
 	"name": "mr-older/univer",
     "type": "library",
 	"license": "MIT",
-	"description": "Universal version detection for github",
+	"description": "Github release version detection",
     "homepage": "https://github.com/mr-older/univer",
 	"keywords": [
 		"github",
