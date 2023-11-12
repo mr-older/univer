@@ -3,12 +3,14 @@
 namespace Univer;
 
 #
-# Algo
+# Detection last release version of certain repo.
 #
-# Detection last release version of given repo.
-# Befor "git commit" user must save commit hash with command
-# "git rev-parse HEAD >last_commit.sha" to file in the project`s root directory (where LICENSE is located).
-# After pushing it goes to repo and can be read by this class. It became previous (!) SHA hash (before commit).
+# *** Algo
+#
+# Before "git commit" command user MUST save commit hash with command
+#  "git rev-parse HEAD >last_commit.sha" to file in the project`s root directory (where LICENSE is located).
+#
+# After pushing it goes to repo and can be read by this class. It became previous (!) SHA hash (one before commit).
 #
 # Finding out child of that hash in commits, comparing child`s SHA and hash of release
 # gives us the release version of your product.
@@ -16,7 +18,7 @@ namespace Univer;
 
 class releaseVer
 {
-    private $github_url = "https://api.github.com/repos/";	// https://api.github.com/repos/OWNER/REPO/releases
+    private $github_url = "https://api.github.com/repos/";
 	public $error, $last_commit_hash_path;
 
 	function __construct($last_commit_hash_path = null) {
@@ -51,19 +53,31 @@ class releaseVer
 		curl_setopt($ch, CURLOPT_USERAGENT, "mr-older/univer");	// github req
 
 		if(empty($commits = curl_exec($ch))) {
-			$this->error = "Couldn`t get commits @ $url";
+			$this->error = "Couldn`t get $url";
 			return false;
 		}
 
-		$commits = json_decode($commits, true);
+		if(($commits = json_decode($commits, true)) === flase) {
+			$this->error = "No JSON @ $url";
+			return false;
+		}
+
+		$release_commit_hash = null;
 		$last_commit_hash = trim($last_commit_hash);
 
 		foreach((array) $commits as $commit) {
-			if($commit['parents']['sha'] != $last_commit_hash) {
-				continue;
+			if(empty($parents = $commit['parents'] ?? null)) continue;
+
+			foreach((array) $parents as $parent) {
+				if(empty($parent['sha']) || $parent['sha'] != $last_commit_hash) {
+					continue;
+				}
+
+				$release_commit_hash = $commit['sha'];
+				break;
 			}
-			$release_commit_hash = $commit['sha'];
-			break;
+
+			if(!empty($release_commit_hash)) break;
 		}
 
 		if(empty($release_commit_hash)) {
@@ -71,17 +85,20 @@ class releaseVer
 			return false;
 		}
 
-		curl_setopt($ch, CURLOPT_URL, ($url = $this->github_url.$repo_name."/releases"));
+		curl_setopt($ch, CURLOPT_URL, ($url = $this->github_url.$repo_name."/tags"));	// /releases
 
 		if(empty($releases = curl_exec($ch))) {
-			$this->error = "Couldn`t get releases @ $url";
+			$this->error = "Couldn`t get $url";
 			return false;
 		}
 
-		$releases = json_decode($releases, true);
+		if(($releases = json_decode($releases, true)) === flase) {
+			$this->error = "No JSON @ $url";
+			return false;
+		}
 
 		foreach((array) $releases as $release) {
-			if($release['commit']['sha'] != $last_commit_hash) continue;
+			if($release['commit']['sha'] != $release_commit_hash) continue;
 			return $release['name'];
 		}
 
