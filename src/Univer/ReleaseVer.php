@@ -57,7 +57,7 @@ class releaseVer
 			return false;
 		}
 
-		if(($commits = json_decode($commits, true)) === flase) {
+		if(($commits = json_decode($commits, true)) === false) {
 			$this->error = "No JSON @ $url";
 			return false;
 		}
@@ -92,7 +92,7 @@ class releaseVer
 			return false;
 		}
 
-		if(($releases = json_decode($releases, true)) === flase) {
+		if(($releases = json_decode($releases, true)) === false) {
 			$this->error = "No JSON @ $url";
 			return false;
 		}
