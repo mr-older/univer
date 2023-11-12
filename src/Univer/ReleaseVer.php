@@ -16,7 +16,7 @@ namespace Univer;
 # gives us the release version of your product.
 #
 
-class releaseVer
+class ReleaseVer
 {
     private $github_url = "https://api.github.com/repos/";
 	public $error, $last_commit_hash_path;
