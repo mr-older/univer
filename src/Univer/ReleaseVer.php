@@ -22,7 +22,7 @@ class ReleaseVer
 	public $error, $last_commit_hash_path;
 
 	function __construct($last_commit_hash_path = null) {
-		$this->last_commit_hash_path = $last_commit_hash_path ?? "..".DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."last_commit.sha";
+		$this->last_commit_hash_path = realpath($last_commit_hash_path ?? "./last_commit.sha");
 	}
 
     /**
