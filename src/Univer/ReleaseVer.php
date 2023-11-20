@@ -62,6 +62,13 @@ class ReleaseVer
 			return false;
 		}
 
+		foreach((array) $commits as $key => $commit) {
+			if($key == 'message') {
+				$this->error = $commit;
+				return false;
+			}
+		}
+
 		$release_commit_hash = null;
 		$last_commit_hash = trim($last_commit_hash);
 
