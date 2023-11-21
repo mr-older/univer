@@ -62,11 +62,9 @@ class ReleaseVer
 			return false;
 		}
 
-		foreach((array) $commits as $key => $commit) {
-			if($key == 'message') {
-				$this->error = $commit;
-				return false;
-			}
+		if(empty($commits[0]['sha'])) {
+			$this->error = $commit[0]['message'] ?? "n/a";
+			return false;
 		}
 
 		$release_commit_hash = null;
