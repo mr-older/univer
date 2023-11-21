@@ -1,6 +1,6 @@
 <?php
 
-namespace Univer;
+namespace UniVer;
 
 #
 # Detection last release version of certain repo.
